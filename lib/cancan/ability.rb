@@ -328,7 +328,12 @@ module CanCan
     def alternative_subjects(subject)
       subject = subject.class unless subject.is_a?(Module)
       descendants = []
-      [:all, *subject.ancestors, *descendants, subject.class.to_s]
+
+      unless RUBY_VERSION <= "1.8.7"
+        [:all, *subject.ancestors, *descendants, subject.class.to_s]
+      else
+        [:all] + subject.ancestors + descendants + [subject.class.to_s]
+      end
     end
 
     # Returns an array of Rule instances which match the action and subject
